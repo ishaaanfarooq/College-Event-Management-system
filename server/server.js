@@ -4,21 +4,60 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 
 dotenv.config();
+
 const app = express();
 
-app.use(cors({
-  origin: "*"
-}));
+/* ==============================
+   CORS CONFIGURATION
+============================== */
+
+// Allow frontend domain (IMPORTANT for production)
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "*",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
+/* ==============================
+   ROOT ROUTE (Health Check)
+============================== */
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "🚀 College EMS Backend Running Successfully",
+  });
+});
+
+/* ==============================
+   ROUTES
+============================== */
 
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/events", require("./routes/eventRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
+/* ==============================
+   DATABASE CONNECTION
+============================== */
+
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("✅ MongoDB Connected");
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB Connection Error:", err);
+  });
+
+/* ==============================
+   START SERVER
+============================== */
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`🔥 Server running on port ${PORT}`);
 });
