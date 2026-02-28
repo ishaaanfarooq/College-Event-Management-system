@@ -5,10 +5,10 @@ const applicationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
   },
-  name: String,
-  email: String,
-  phone: String,
-  usn: String,
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  phone: { type: String, required: true },
+  usn: { type: String, required: true },
 
   status: {
     type: String,
@@ -28,11 +28,22 @@ const applicationSchema = new mongoose.Schema({
 });
 
 const eventSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  date: Date,
-  location: String,
-  category: String,
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+
+  date: {
+    type: Date,
+    required: true
+  },
+
+  location: { type: String, required: true },
+
+  category: {
+    type: String,
+    enum: ["Placement", "Department", "Volunteer", "Hackathon", "Workshop", "Other"],
+    required: true
+  },
+
   image: String,
 
   maxCapacity: {
@@ -40,7 +51,10 @@ const eventSchema = new mongoose.Schema({
     default: 50
   },
 
-  registrationDeadline: Date,
+  registrationDeadline: {
+    type: Date,
+    required: true
+  },
 
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
