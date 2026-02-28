@@ -26,9 +26,7 @@ app.use(express.json());
 ============================== */
 
 app.get("/", (req, res) => {
-  res.status(200).json({
-    message: "🚀 College EMS Backend Running Successfully",
-  });
+  res.send("College EMS Backend Running 🚀");
 });
 
 /* ==============================
