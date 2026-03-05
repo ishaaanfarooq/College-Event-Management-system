@@ -1,25 +1,8 @@
-const express = require("express");
+const app = require("./app");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const cors = require("cors");
-const path = require("path");
 
 dotenv.config();
-const app = express();
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Root test route
-app.get("/", (req, res) => {
-  res.send("College EMS Backend Running 🚀");
-});
-
-// API Routes
-app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/events", require("./routes/eventRoutes"));
-app.use("/api/admin", require("./routes/adminRoutes"));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)

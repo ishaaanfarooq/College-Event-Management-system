@@ -2,7 +2,22 @@ const router = require("express").Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const User = require("../models/User");
 
-// Toggle permission
+/**
+ * @swagger
+ * /admin/permission/{id}:
+ *   patch:
+ *     summary: Toggle event creation permission for a user
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Permission updated
+ */
 router.patch("/permission/:id", authMiddleware, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -33,7 +48,18 @@ router.patch("/permission/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// Get all users
+/**
+ * @swagger
+ * /admin/users:
+ *   get:
+ *     summary: Get all registered users (Admin only)
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of users
+ */
 router.get("/users", authMiddleware, async (req, res) => {
   try {
     if (req.user.role !== "admin") {

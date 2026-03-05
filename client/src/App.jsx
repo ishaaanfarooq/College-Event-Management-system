@@ -4,10 +4,12 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
 import AdminPanel from "./pages/AdminPanel";
 import CreateEvent from "./pages/CreateEvent";
 import ManageEvents from "./pages/ManageEvents";
 import MyApplications from "./pages/MyApplications";
+import Analytics from "./pages/Analytics";
 
 function App() {
   const { user } = useAuth();
@@ -25,6 +27,8 @@ function App() {
           path="/register"
           element={user ? <Navigate to="/dashboard" /> : <Register />}
         />
+
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route
           path="/dashboard"
@@ -56,7 +60,7 @@ function App() {
         <Route
           path="/manage-events"
           element={
-            <ProtectedRoute requireAdmin={true}>
+            <ProtectedRoute>
               <ManageEvents />
             </ProtectedRoute>
           }
@@ -67,6 +71,15 @@ function App() {
           element={
             <ProtectedRoute>
               <MyApplications />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute>
+              <Analytics />
             </ProtectedRoute>
           }
         />

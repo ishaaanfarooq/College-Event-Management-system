@@ -12,6 +12,18 @@ const userSchema = new mongoose.Schema({
   canCreateEvent: {
     type: Boolean,
     default: false
+  },
+  resetOtp: {
+    type: String,
+    default: null
+  },
+  resetOtpExpires: {
+    type: Date,
+    default: null
+  },
+  fcmToken: {
+    type: String,
+    default: null
   }
 }, { timestamps: true });
 

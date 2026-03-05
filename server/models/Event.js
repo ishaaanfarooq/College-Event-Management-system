@@ -61,7 +61,17 @@ const eventSchema = new mongoose.Schema({
     ref: "User"
   },
 
-  applications: [applicationSchema]
+  status: {
+    type: String,
+    enum: ["pending_review", "published", "rejected"],
+    default: "pending_review"
+  },
+
+  applications: [applicationSchema],
+
+  // Analytics
+  viewCount: { type: Number, default: 0 },
+  totalViewTime: { type: Number, default: 0 }, // in milliseconds
 
 }, { timestamps: true });
 
