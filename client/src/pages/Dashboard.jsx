@@ -130,9 +130,18 @@ export default function Dashboard() {
     }
   };
 
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const filtered = events.filter((ev) => {
     const isPublishedOrAdmin = user?.role === "admin" || ev.status === "published";
-    const matchSearch = ev.title.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = ev.title.toLowerCase().includes(debouncedSearch.toLowerCase());
     const matchCat = catFilter === "All" || ev.category === catFilter;
     return isPublishedOrAdmin && matchSearch && matchCat;
   });
