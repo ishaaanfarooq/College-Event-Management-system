@@ -8,6 +8,7 @@ import { Search, SlidersHorizontal, MapPin, Tag, Users, Clock, Send, Trash2, Che
 import { requestForToken, onMessageListener, trackEvent } from "../firebase-config";
 import { toast } from "react-toastify";
 import EventCard from "../components/EventCard";
+import { useSocket } from "../context/SocketContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -59,6 +60,27 @@ export default function Dashboard() {
       { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }
     );
   }, []);
+
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("event_status_update", (data) => {
+      fetchEvents();
+    });
+
+    socket.on("application_status_update", (data) => {
+      if (user && user._id === data.userId) {
+        fetchEvents();
+      }
+    });
+
+    return () => {
+      socket.off("event_status_update");
+      socket.off("application_status_update");
+    };
+  }, [socket, user]);
 
   useEffect(() => {
     const cards = document.querySelectorAll(".event-card");

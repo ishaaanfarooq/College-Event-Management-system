@@ -4,6 +4,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { useAuth } from "../context/AuthContext";
 import { gsap } from "gsap";
 import { Trash2, MapPin, Users, CalendarDays, CheckCircle, XCircle } from "lucide-react";
+import { useSocket } from "../context/SocketContext";
 
 export default function ManageEvents() {
   const { user } = useAuth();
@@ -22,6 +23,31 @@ export default function ManageEvents() {
   useEffect(() => {
     fetchEvents();
   }, []);
+
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("new_application", (data) => {
+      if (user && (user._id === data.creatorId || user.role === "admin")) {
+        fetchEvents();
+        setTimeout(() => {
+          const card = document.getElementById(`me-card-${data.eventId}`);
+          if (card) {
+            gsap.fromTo(card,
+              { borderColor: "var(--accent-violet)", borderStyle: "solid", borderWidth: "2px" },
+              { borderColor: "var(--border-glass)", borderStyle: "solid", borderWidth: "1px", duration: 3 }
+            );
+          }
+        }, 100);
+      }
+    });
+
+    return () => {
+      socket.off("new_application");
+    };
+  }, [socket, user]);
 
   useEffect(() => {
     if (!events.length) return;

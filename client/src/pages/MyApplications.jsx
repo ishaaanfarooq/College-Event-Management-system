@@ -4,6 +4,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { useAuth } from "../context/AuthContext";
 import { gsap } from "gsap";
 import { CalendarDays, CheckCircle, XCircle, Clock, Inbox } from "lucide-react";
+import { useSocket } from "../context/SocketContext";
 
 export default function MyApplications() {
   const { user } = useAuth();
@@ -13,6 +14,22 @@ export default function MyApplications() {
   useEffect(() => {
     fetchApplications();
   }, []);
+
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("application_status_update", (data) => {
+      if (user && user._id === data.userId) {
+        fetchApplications();
+      }
+    });
+
+    return () => {
+      socket.off("application_status_update");
+    };
+  }, [socket, user]);
 
   useEffect(() => {
     if (!events.length) return;

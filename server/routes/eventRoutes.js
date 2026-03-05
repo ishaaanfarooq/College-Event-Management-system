@@ -3,6 +3,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const Event = require("../models/Event");
 const User = require("../models/User");
 const { sendPushNotification } = require("../utils/firebaseAdmin");
+const { getIO } = require("../utils/socket");
 
 /* =====================================================
    CREATE EVENT
@@ -252,6 +253,19 @@ router.post("/apply/:id", authMiddleware, async (req, res) => {
       );
     }
 
+    // Real-time notification for Creator
+    try {
+      const io = getIO();
+      io.emit("new_application", {
+        eventId: event._id,
+        creatorId: event.createdBy,
+        applicantName: req.body.name,
+        eventTitle: event.title
+      });
+    } catch (e) {
+      console.error("Socket emit failed:", e);
+    }
+
     res.json({ message: "Application submitted successfully" });
 
   } catch (err) {
@@ -345,7 +359,20 @@ router.patch("/application/:eventId/:appId", authMiddleware, async (req, res) =>
       );
     }
 
-    res.json({ message: "Application updated successfully" });
+    // Real-time notification for Applicant
+    try {
+      const io = getIO();
+      io.emit("application_status_update", {
+        eventId: event._id,
+        userId: application.user,
+        status: req.body.status,
+        eventTitle: event.title
+      });
+    } catch (e) {
+      console.error("Socket emit failed:", e);
+    }
+
+    res.json({ message: "Application status updated successfully", application });
 
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -397,7 +424,7 @@ router.patch("/review/:id", authMiddleware, async (req, res) => {
     event.status = status;
     await event.save();
 
-    // Notify Creator
+    // Notify Creator via Push
     const creator = await User.findById(event.createdBy);
     if (creator && creator.fcmToken) {
       await sendPushNotification(
@@ -406,6 +433,19 @@ router.patch("/review/:id", authMiddleware, async (req, res) => {
         `Your event "${event.title}" has been ${status} by an admin.`,
         { eventId: event._id.toString(), status: status }
       );
+    }
+
+    // Real-time notification for Creator via Socket
+    try {
+      const io = getIO();
+      io.emit("event_status_update", {
+        eventId: event._id,
+        creatorId: event.createdBy,
+        status: status,
+        eventTitle: event.title
+      });
+    } catch (e) {
+      console.error("Socket emit failed:", e);
     }
 
     res.json({ message: `Event ${status} successfully`, event });
