@@ -524,6 +524,17 @@ router.patch("/:id/dwell", authMiddleware, async (req, res) => {
       { new: true }
     );
     if (!event) return res.status(404).json({ message: "Event not found" });
+
+    // Update user interests (Phase 13)
+    if (req.user) {
+      const user = await User.findById(req.user._id);
+      if (user) {
+        const currentScore = user.categoryEngagement.get(event.category) || 0;
+        user.categoryEngagement.set(event.category, currentScore + duration);
+        await user.save();
+      }
+    }
+
     res.json({ message: "Dwell time logged" });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -559,6 +570,67 @@ router.get("/creator/stats", authMiddleware, async (req, res) => {
     }));
 
     res.json(stats);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /events/user/interests:
+ *   get:
+ *     summary: Get current student's category interest profile (Phase 13)
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Interest breakdown
+ */
+router.get("/user/interests", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const interests = user.categoryEngagement || {};
+    res.json(interests);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /events/recommended:
+ *   get:
+ *     summary: Get recommended events based on user attention (Phase 13)
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of recommended events
+ */
+router.get("/recommended", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Sort categories by engagement time
+    const sortedInterests = [...user.categoryEngagement.entries()].sort((a, b) => b[1] - a[1]);
+
+    if (sortedInterests.length === 0) {
+      // Return top viewed events as fallback
+      const fallback = await Event.find({ status: "published" }).sort({ viewCount: -1 }).limit(5);
+      return res.json(fallback);
+    }
+
+    const topCategory = sortedInterests[0][0];
+    const recommendations = await Event.find({
+      category: topCategory,
+      status: "published",
+      _id: { $nin: user.appliedEvents } // User hasn't applied yet
+    }).limit(4);
+
+    res.json(recommendations);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

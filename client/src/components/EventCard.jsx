@@ -93,6 +93,11 @@ export default function EventCard({ event, user, onApplyToggle, isSelected, appl
                             Pending Review
                         </span>
                     )}
+                    {event.totalViewTime > 600000 && (
+                        <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontSize: "0.7rem", color: "#4ade80", border: "1px solid rgba(74, 222, 128, 0.3)", padding: "0.1rem 0.4rem", borderRadius: "8px" }}>
+                            🔥 High Engagement
+                        </span>
+                    )}
                 </div>
 
                 <h3 style={{ fontWeight: 700, fontSize: "1rem", color: "var(--text-primary)", marginBottom: "0.5rem", lineHeight: 1.3 }}>

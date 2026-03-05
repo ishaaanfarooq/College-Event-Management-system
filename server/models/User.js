@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema({
   fcmToken: {
     type: String,
     default: null
+  },
+  categoryEngagement: {
+    type: Map,
+    of: Number, // category name -> total milliseconds
+    default: {}
   }
 }, { timestamps: true });
 

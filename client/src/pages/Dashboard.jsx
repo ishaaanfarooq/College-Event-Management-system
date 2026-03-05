@@ -29,16 +29,37 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [catFilter, setCatFilter] = useState("All");
   const [selectedEvent, setSelected] = useState(null);
+  const [interests, setInterests] = useState({});
+  const [recommendations, setRecommendations] = useState([]);
   const [applyForm, setApplyForm] = useState({ name: "", email: "", phone: "", usn: "" });
   const headerRef = useRef(null);
+  const interestRef = useRef(null);
 
   const fetchEvents = async () => {
     const res = await API.get("/events");
     setEvents(res.data);
   };
 
+  const fetchInterestData = async () => {
+    try {
+      const [intRes, recRes] = await Promise.all([
+        API.get("/events/user/interests"),
+        API.get("/events/recommended")
+      ]);
+      setInterests(intRes.data);
+      setRecommendations(recRes.data);
+    } catch (err) {
+      console.error("Interest fetch failed", err);
+    }
+  };
+
   useEffect(() => {
     fetchEvents();
+    if (user?.role === "student") {
+      fetchInterestData();
+    }
+    // ... matching existing code ...
+
 
     // Request Notification permission and get token
     requestForToken().then(token => {
@@ -134,6 +155,65 @@ export default function Dashboard() {
             {filtered.length} event{filtered.length !== 1 ? "s" : ""} available
           </p>
         </div>
+
+        {/* Phase 13: Personal Interest Profile & Recommendations */}
+        {user?.role === "student" && Object.keys(interests).length > 0 && (
+          <div ref={interestRef} className="card" style={{ marginBottom: "2rem", padding: "1.5rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "2rem", flexWrap: "wrap" }}>
+              <div style={{ flex: 1, minWidth: "300px" }}>
+                <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <Clock size={16} color="var(--accent-violet)" /> Your Interest Profile
+                </h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                  {Object.entries(interests).slice(0, 4).sort((a, b) => b[1] - a[1]).map(([cat, time]) => (
+                    <div key={cat}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", marginBottom: "0.25rem" }}>
+                        <span style={{ color: "var(--text-secondary)" }}>{cat}</span>
+                        <span style={{ color: "var(--text-muted)" }}>{(time / 60000).toFixed(1)}m dwell time</span>
+                      </div>
+                      <div className="progress-bar">
+                        <div
+                          className="progress-bar-fill"
+                          style={{
+                            width: `${Math.min((time / 300000) * 100, 100)}%`,
+                            background: CATEGORY_COLOR[cat] || "var(--accent-violet)"
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {recommendations.length > 0 && (
+                <div style={{ flex: 1, minWidth: "300px" }}>
+                  <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <Star size={16} color="#f59e0b" /> Recommended for You
+                  </h3>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                    {recommendations.map(re => (
+                      <div
+                        key={re._id}
+                        style={{
+                          display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.6rem",
+                          background: "rgba(255,255,255,0.03)", borderRadius: "10px", border: "1px solid var(--border-glass)"
+                        }}
+                      >
+                        <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: CATEGORY_COLOR[re.category], display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>
+                          📅
+                        </div>
+                        <div>
+                          <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-primary)" }}>{re.title}</p>
+                          <p style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>{re.category} · Matches your interests</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Search + Filter */}
         <div style={{ display: "flex", gap: "0.75rem", marginBottom: "2rem", flexWrap: "wrap" }}>
