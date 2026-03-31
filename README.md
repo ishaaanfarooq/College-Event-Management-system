@@ -1,58 +1,64 @@
-# College Event Management System (CEMS)
+# College Event Management System (CEMS) 🎓
 
 A high-performance, professional-grade platform for campus event discovery and organization. Designed with a focus on accessibility, data-driven engagement, and production-level stability.
 
-## 🚀 Key "Selection-Ready" Features
+## 🌟 Modernization & "Selection-Ready" Features
 
-This project was built to exceed typical portfolio standards by incorporating advanced engineering practices:
+This project has been heavily modernized to exceed typical portfolio standards, incorporating enterprise-grade engineering practices:
 
-### 📊 Engagement & "Screen Time" Analytics
-- **Passive Eye-Tracking**: Uses `IntersectionObserver` to track exactly how long users dwell on specific events.
-- **Data-Driven Insights**: Creators can view heatmaps of user attention and engagement scores (Views vs. Applications ratio).
-- **Heartbeat Logging**: Efficient periodic tracking of user "dwell time" to calculate total screen time.
+### 🏛️ Next.js 15 Architecture
+- **App Router Migration**: Transitioned from standard React to **Next.js 15 (App Router)** for optimized performance, Server Components, and superior SEO.
+- **TypeScript Core**: 100% Type-safe codebase ensuring reliability and maintainability.
+- **Enterprise Middleware**: Hardened backend with **Helmet**, **Morgan**, and JWT-based secure authentication.
+
+### 🤖 Offline AI Assistant (Option C)
+- **Local Llama 3.2 Integration**: Integrated an intelligent **Offline AI Chatbot** powered by **Ollama** and **Llama 3.2**.
+- **Privacy-First**: No data leaves the server; inference is handled locally on the host machine.
+- **Context-Aware**: Custom-tuned to act as a professional CEMS Assistant, helping students discover events.
+
+### 🎨 "Wheatish Classy" Design System
+- **Sophisticated Aesthetic**: A custom theme characterized by **Gold (#D4AF37)**, **Bronze**, and **Ivory** tones, replacing generic palettes with a "Luxurious Academic" feel.
+- **Dynamic Theming**: Seamless Light/Dark mode transitions with translucent glassmorphism and smooth **GSAP** animations.
 
 ### ♿ 100% App-Wide Accessibility
-- **Accessibility Toolbar**: Integrated panel for real-time contrast toggling, font scaling (80%-150%), and Dyslexia-friendly font settings.
-- **Semantic Excellence**: 100% ARIA-compliant landmarks and labels across all 15+ pages.
-- **Keyboard Mastery**: Full keyboard navigation support including "Skip to Content" workflows.
+- **Accessibility Toolbar**: Real-time panel for high-contrast toggling, font scaling (80%-150%), and **OpenDyslexic** support.
+- **Inclusive Design**: Fully ARIA-compliant landmarks and keyboard-navigable workflows.
 
-### 📚 Interactive API Documentation (Swagger)
-- **Live UI**: Explore and test the REST API directly through the integrated Swagger/OpenAPI dashboard at `/api-docs`.
-- **Production Standards**: Fully documented schemas, security requirements, and response types.
-
-### 📱 Production Polish (PWA & Push)
-- **Installable PWA**: Home screen install support with custom splash screens and offline-ready service workers.
-- **Real-time Push (FCM)**: Desktop and mobile-style push notifications for application approvals and status updates.
-- **Automated QA (CI/CD)**: Comprehensive unit tests (Jest/Supertest) and GitHub Actions pipeline for automated verification.
+### 📊 Engagement & Analytics
+- **Passive Tracking**: Uses `IntersectionObserver` to measure real-time event "dwell time" and engagement ratios.
+- **Analytics Dashboard**: Comprehensive view for admins to track total applications and average user engagement.
 
 ---
 
 ## 🛠 Tech Stack
 
-- **Frontend**: React 19, GSAP (Animations), Lucide Icons, Tailwind CSS, Vite.
-- **Backend**: Node.js, Express, MongoDB/Mongoose.
-- **Services**: Firebase (Cloud Messaging, Analytics), Nodemailer (OTP Verification).
-- **Testing**: Jest, Supertest, MongoDB Memory Server.
+- **Frontend**: Next.js 15, TypeScript, GSAP, Tailwind CSS, Lucide Icons.
+- **Backend**: Node.js, Express, MongoDB (Mongoose), Firebase Admin.
+- **AI/ML**: Ollama, Llama 3.2 (Offline Inference).
+- **Communication**: Firebase Cloud Messaging (Push), Nodemailer (OTP).
 
 ## 🏁 Getting Started
 
-### 1. Backend Setup
+### 1. Requirements
+- Node.js 18+
+- MongoDB
+- **Ollama** (for AI features)
+
+### 2. Setup
 ```bash
-cd server
-npm install
+# Clone the repo
+git clone https://github.com/ishaaanfarooq/College-Event-Management-system.git
+
+# Install Server dependencies
+cd server && npm install
+# Start server
+npm run dev
+
+# Install Client dependencies
+cd ../client && npm install
+# Start client
 npm run dev
 ```
-
-### 2. Frontend Setup
-```bash
-cd client
-npm install
-npm run dev
-```
-
-### 3. API Documentation
-Visit `http://localhost:5000/api-docs` to view the interactive Swagger documentation.
 
 ---
-
 Designed for Professional Excellence by Ish-an.
